@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7fafc; }
+        .table-auto th, .table-auto td { padding: 8px 12px; border: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body class="p-4 sm:p-8 min-h-screen text-base">
+
+    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-100 mx-auto w-full max-w-7xl">
+        
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Session Data Dashboard</h1>
+        <p class="text-gray-600 mb-6">Filter the session data and view reports.</p>
+
+        <!-- Status Message Box -->
+        <div id="statusMessage" class="mt-4 p-4 rounded-lg text-lg hidden"></div>
+
+        <!-- Filters Form -->
+        <div class="bg-gray-50 p-6 rounded-lg shadow-inner mb-8 border border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Filter Sessions</h2>
+            <form id="filterForm" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                
+                <!-- Coordinator Filter -->
+                <div>
+                    <label for="filterName" class="block text-sm font-medium text-gray-700">Coordinator</label>
+                    <select id="filterName" name="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2"></select>
+                </div>
+
+                <!-- School Filter -->
+                <div>
+                    <label for="filterSchool" class="block text-sm font-medium text-gray-700">School</label>
+                    <select id="filterSchool" name="school" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2"></select>
+                </div>
+
+                <!-- Start Date Filter -->
+                <div>
+                    <label for="filterStartDate" class="block text-sm font-medium text-gray-700">Start Date (Optional)</label>
+                    <input type="date" id="filterStartDate" name="startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2">
+                </div>
+
+                <!-- End Date Filter -->
+                <div>
+                    <label for="filterEndDate" class="block text-sm font-medium text-gray-700">End Date (Optional)</label>
+                    <input type="date" id="filterEndDate" name="endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="filterButton"
+                        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 disabled:opacity-50">
+                    Run Report
+                </button>
+            </form>
+        </div>
+
+        <!-- Report Display Area -->
+        <div id="reportContainer" class="mt-8 space-y-12">
+            <p class="text-gray-500 text-center">Use the filters above and click 'Run Report' to display session data.</p>
+        </div>
+    </div>
+
+    <script>
+        const filterForm = document.getElementById('filterForm');
+        const reportContainer = document.getElementById('reportContainer');
+        const filterButton = document.getElementById('filterButton');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // --- Data Injection from Server ---
+        const FILTER_DATA = (() => {
+            try {
+                // IMPORTANT: Template variable name must match the one in DashboardCode.gs
+                return JSON.parse('<?!= filterData ?>');
+            } catch (e) {
+                console.error("Error loading filter data.", e);
+                return { coordinators: [], schools: [] };
+            }
+        })();
+
+        // --- Initialization ---
+
+        function populateFilters() {
+            const nameSelect = document.getElementById('filterName');
+            const schoolSelect = document.getElementById('filterSchool');
+
+            // 1. Coordinator Filter
+            nameSelect.innerHTML = '<option value="All Coordinators" selected>All Coordinators</option>';
+            FILTER_DATA.coordinators.forEach(name => {
+                nameSelect.innerHTML += `<option value="${name}">${name}</option>`;
+            });
+
+            // 2. School Filter
+            schoolSelect.innerHTML = '<option value="All Schools" selected>All Schools</option>';
+            FILTER_DATA.schools.forEach(school => {
+                schoolSelect.innerHTML += `<option value="${school}">${school}</option>`;
+            });
+        }
+
+        function showMessage(text, className) {
+            statusMessage.className = `mt-4 p-4 rounded-lg block ${className}`;
+            statusMessage.textContent = text;
+            statusMessage.style.display = 'block';
+            statusMessage.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Filtering and Reporting ---
+
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            filterButton.textContent = 'Loading...';
+            filterButton.disabled = true;
+            reportContainer.innerHTML = '';
+            showMessage('Fetching and processing data...', 'bg-blue-100 text-blue-800');
+
+            const formData = new FormData(filterForm);
+            const filters = Object.fromEntries(formData.entries());
+
+            // IMPORTANT: Call the server-side function defined in DashboardCode.gs
+            google.script.run
+                .withSuccessHandler(renderReports)
+                .withFailureHandler(onError)
+                .getFilteredData(filters);
+        });
+
+        function onError(error) {
+            filterButton.textContent = 'Run Report';
+            filterButton.disabled = false;
+            showMessage('Error: Failed to fetch data. ' + error.message, 'bg-red-100 text-red-800');
+            console.error(error);
+        }
+
+        function renderReports(data) {
+            filterButton.textContent = 'Run Report';
+            filterButton.disabled = false;
+            statusMessage.style.display = 'none';
+            reportContainer.innerHTML = ''; // Clear previous reports
+
+            // Display filters used
+            let filterDisplay = `
+                <div class="p-3 bg-indigo-50 rounded-md text-sm text-indigo-800">
+                    <p><strong>Filters Applied:</strong> Coordinator: ${data.filterValues.name}, School: ${data.filterValues.school}, Dates: ${data.filterValues.startDate || 'Any'} to ${data.filterValues.endDate || 'Any'}</p>
+                </div>
+            `;
+            reportContainer.innerHTML += filterDisplay;
+
+
+            // --- Report 1: List of all sessions ---
+            reportContainer.innerHTML += `
+                <h2 class="text-2xl font-bold text-gray-800 border-b pb-2">1. All Filtered Sessions (${data.report1.length} Total)</h2>
+                <div class="overflow-x-auto shadow-md rounded-lg">
+                    ${data.report1.length > 0 ? renderTable(data.report1, data.report1Headers) : '<p class="p-4 bg-yellow-50 rounded-md">No sessions found for the applied filters.</p>'}
+                </div>
+            `;
+
+            // --- Report 2: Class Breakdown (Conditional) ---
+            if (data.report2 && data.report2.length > 0) {
+                 reportContainer.innerHTML += `
+                    <h2 class="text-2xl font-bold text-gray-800 border-b pb-2 pt-4">2. Class-wise Session Breakdown for ${data.filterValues.school}</h2>
+                    <div class="space-y-6">
+                        ${renderClassBreakdown(data.report2)}
+                    </div>
+                `;
+            } else if (data.filterValues.school === 'All Schools') {
+                reportContainer.innerHTML += `
+                    <p class="p-4 bg-blue-50 rounded-md text-blue-800 border border-blue-200">Class breakdown report is available only when filtering by a single school.</p>
+                `;
+            }
+        }
+
+        // Helper function to render the main table (Report 1)
+        function renderTable(data, headers) {
+            let html = '<table class="min-w-full divide-y divide-gray-200 table-auto">';
+            
+            // Table Header
+            html += '<thead class="bg-gray-200"><tr>';
+            headers.forEach(header => {
+                // The server-side script now handles the removal and renaming ('Date' instead of 'Session Start Time').
+                // We only need to apply custom names to the remaining fields if they are too long.
+                let displayHeader = header;
+                if(header === 'Class_Student_Counts') displayHeader = 'Classes & Students';
+                if(header === 'Learning Outcomes observed') displayHeader = 'Outcomes';
+                if(header === 'Challenges faced') displayHeader = 'Challenges';
+                
+                html += `<th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">${displayHeader}</th>`;
+            });
+            html += '</tr></thead>';
+
+            // Table Body
+            html += '<tbody class="bg-white divide-y divide-gray-200">';
+            data.forEach(row => {
+                html += '<tr>';
+                row.forEach(cell => {
+                    // Truncate long text fields for better dashboard view
+                    let displayCell = cell.toString();
+                    if (displayCell.length > 50) {
+                        displayCell = displayCell.substring(0, 50) + '...';
+                    }
+                    html += `<td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">${displayCell}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        }
+
+        // Helper function to render the class breakdown (Report 2)
+        function renderClassBreakdown(breakdownData) {
+            let html = '';
+            
+            breakdownData.forEach(classItem => {
+                html += `
+                    <div class="border border-gray-300 rounded-lg p-4 bg-white shadow-sm">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-2">Class: ${classItem.className}</h3>
+                        ${classItem.sessions.length > 0 
+                            ? `<ul class="list-disc ml-5 text-gray-700 space-y-2">
+                                ${classItem.sessions.map(s => `
+                                    <li>
+                                        <span class="font-medium">${s.module}</span>
+                                        <div class="text-sm text-gray-600 mt-0.5 ml-1">
+                                            <span class="font-semibold text-green-700">${s.students} students</span>
+                                            | Conducted by <span class="font-semibold text-purple-700">${s.coordinator}</span> on ${s.date}
+                                        </div>
+                                    </li>`).join('')}
+                               </ul>`
+                            : '<p class="text-gray-500">No sessions recorded for this class with the current filters.</p>'}
+                    </div>
+                `;
+            });
+            return html;
+        }
+
+        // Run initialization
+        populateFilters();
+    </script>
+</body>
+</html>
