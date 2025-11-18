@@ -19,8 +19,16 @@ function getColumnData(sheetName) {
       return { error: `Sheet '${sheetName}' is missing.` };
     }
     
-    // Get all values from the first column (A)
-    const dataRange = sheet.getRange(1, 1, sheet.getMaxRows(), 1);
+    const lastRow = sheet.getLastRow();
+    
+    // Check if the sheet actually contains any data rows.
+    if (lastRow === 0) {
+      Logger.log(`No data found in sheet '${sheetName}'.`);
+      return { data: [] }; 
+    }
+    
+    // Get all values from the first column (A) from row 1 up to the last row with content.
+    const dataRange = sheet.getRange(1, 1, lastRow, 1);
     const values = dataRange.getValues();
     
     // Filter out empty cells and flatten the 2D array
@@ -29,15 +37,19 @@ function getColumnData(sheetName) {
       .filter(cell => cell && cell.toString().trim() !== '');
       
     if (data.length === 0) {
-      Logger.log(`No data found in sheet '${sheetName}'.`);
-      return { error: `No data found in '${sheetName}'.` };
+      Logger.log(`No non-empty data found in sheet '${sheetName}'.`);
+      return { data: [] }; // Return empty array if no non-empty values are found
     }
     
     return { data: data };
 
   } catch (e) {
     Logger.log(`Error reading sheet '${sheetName}': ${e.toString()}`);
-    return { error: `Failed to load data from '${sheetName}'.` };
+    // Check for "Sheet is empty" error which can happen if the sheet exists but has no data
+    if (e.message.includes("Sheet is empty")) {
+        return { data: [] };
+    }
+    return { error: `Failed to load data from '${sheetName}': ${e.toString()}` };
   }
 }
 

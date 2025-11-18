@@ -17,8 +17,23 @@
     <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-100 mx-auto w-full"
          style="max-width: 95vw; min-height: 95vh;">
 
-        <h1 class="text-4xl font-bold text-gray-800 mb-3">Chetana Session Tracker</h1>
-        <p class="text-gray-600 mb-8">Fill out this form for each session separately.</p>
+        <!-- HEADER ROW: Logo (Left) and Title (Right & vertically centered) -->
+        <div class="flex justify-between items-center mb-6">
+            <!-- Logo (Left) -->
+            <div class="flex-shrink-0 mr-6"> 
+                <img src="https://drive.google.com/thumbnail?id=1FArQtL7K40Tyc-gU7UD-yjMw7GlwTumt" 
+                     alt="Chetana Tracker Logo" 
+                     style="height: 150px; max-width: 100%;" 
+                     class="block" 
+                     onerror="this.onerror=null; this.src='https://placehold.co/150x150/f0f9ff/000000?text=Logo+Unavailable'">
+            </div>
+
+            <!-- Title and Description (Right Horizontally and Center Vertically) -->
+            <div class="flex-1 min-w-0 text-right">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Chetana Session Tracker</h1>
+                <p class="text-gray-600">Fill out this form for each session separately.</p>
+            </div>
+        </div>
 
         <div id="statusMessage" class="mt-4 p-4 rounded-lg text-lg hidden"></div>
 

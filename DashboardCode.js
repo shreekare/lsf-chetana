@@ -1,26 +1,4 @@
 /**
- * Gets all non-empty values from the first column of a specified sheet.
- */
-function getColumnData(sheetName) {
-  try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName(sheetName);
-    if (!sheet) return [];
-    
-    const dataRange = sheet.getRange(1, 1, sheet.getMaxRows(), 1);
-    const values = dataRange.getValues();
-    
-    return values
-      .map(row => row[0])
-      .filter(cell => cell && cell.toString().trim() !== '');
-
-  } catch (e) {
-    Logger.log(`Error reading sheet '${sheetName}': ${e.toString()}`);
-    return [];
-  }
-}
-
-/**
  * Reads the 'Schools' sheet and returns a list of school names.
  */
 function getSchoolNames() {
@@ -250,7 +228,7 @@ function getFilteredData(filters) {
  * RENAMED to the default entry point.
  * This is the Web App entry point for the DASHBOARD.
  */
-function doGet() { // RENAMED
+function doGetDashboard() { // RENAMED
   // Use the new HTML template file
   const template = HtmlService.createTemplateFromFile('DashboardIndex');
   
