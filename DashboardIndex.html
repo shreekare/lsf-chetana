@@ -3,31 +3,31 @@
 <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chetana Tracker Dashboard</title> <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <title>Chetana Tracker Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* ---------------------------------- */
         /* BASE & LAYOUT STYLES */
         /* ---------------------------------- */
-        body { 
-            font-family: 'Inter', sans-serif; 
+        body {
+            font-family: 'Inter', sans-serif;
             background-color: #f7fafc; /* bg-gray-50 */
-            padding: 1rem; /* p-4 */
-            min-height: 100vh; 
-            text-align: left; /* Default text alignment */
+            padding: 1rem;
+            min-height: 100vh;
+            text-align: left;
         }
-        
-        @media (min-width: 640px) {
-            body { padding: 2rem; } /* sm:p-8 */
+
+        @media (min-width: 780px) {
+            body { padding: 2rem; }
         }
 
         .container {
             background-color: white;
-            padding: 1.5rem; /* p-6 */
+            padding: 1.5rem;
             border-radius: 0.75rem; /* rounded-xl */
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-2xl */
-            border: 1px solid #f3f4f6; /* border border-gray-100 */
-            margin: 2rem auto; 
+            border: 1px solid #f3f4f6; /* border-gray-100 */
+            margin: 2rem auto;
             width: 100%;
             max-width: 1280px; /* max-w-7xl */
             font-size: 1rem;
@@ -39,54 +39,54 @@
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: center; /* items-center */
-            margin-bottom: 1.5rem; /* mb-6 */
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
         .logo-container {
-            flex-shrink: 0; /* flex-shrink-0 */
-            margin-right: 1.5rem; /* mr-6 */
+            flex-shrink: 0;
+            margin-right: 1.5rem;
         }
         .header-title-container {
-            flex: 1 1 0%; 
+            flex: 1 1 0%;
             min-width: 0;
             text-align: right;
         }
         .header-title {
-            font-size: 1.875rem; /* text-3xl */
+            font-size: 1.875rem;
             font-weight: 700; /* font-bold */
             color: #1f2937; /* text-gray-800 */
-            margin-bottom: 0.5rem; /* mb-2 */
+            margin-bottom: 0.5rem;
         }
         .header-subtitle {
             color: #4b5563; /* text-gray-600 */
             font-size: 1rem;
         }
-        
+
         /* ---------------------------------- */
         /* FILTER FORM STYLES */
         /* ---------------------------------- */
         .filter-section {
             background-color: #f9fafb; /* bg-gray-50 */
-            padding: 1.5rem; /* p-6 */
+            padding: 1.5rem;
             border-radius: 0.5rem; /* rounded-lg */
             box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.05); /* shadow-inner */
-            margin-bottom: 2rem; /* mb-8 */
+            margin-bottom: 2rem;
             border: 1px solid #e5e7eb; /* border border-gray-200 */
         }
-        
+
         .filter-section h2 {
-            font-size: 1.25rem; /* text-xl */
+            font-size: 1.25rem;
             font-weight: 600; /* font-semibold */
             color: #374151; /* text-gray-700 */
-            margin-bottom: 1rem; /* mb-4 */
+            margin-bottom: 1rem;
         }
 
         .filter-grid-row-1 {
             display: grid;
             grid-template-columns: repeat(1, 1fr);
-            gap: 1rem; /* gap-4 */
+            gap: 1rem;
             align-items: flex-end; /* items-end */
-            margin-bottom: 1rem; /* mb-4 */
+            margin-bottom: 1rem;
         }
         @media (min-width: 768px) {
             .filter-grid-row-1 {
@@ -96,17 +96,17 @@
 
         label {
             display: block;
-            font-size: 0.875rem; /* text-sm */
+            font-size: 0.875rem;
             font-weight: 500; /* font-medium */
             color: #374151; /* text-gray-700 */
         }
 
         .input-field, .select-field {
-            margin-top: 0.25rem; /* mt-1 */
+            margin-top: 0.25rem;
             display: block;
             width: 100%;
-            padding: 0.5rem 0.75rem; /* py-2 */
-            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
             border: 1px solid #d1d5db; /* border-gray-300 */
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
             font-size: 1rem;
@@ -125,53 +125,54 @@
         .filter-grid-row-2 {
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* items-start */
-            gap: 1rem; /* gap-4 */
-            padding-top: 0.5rem; /* pt-2 */
+            align-items: flex-start;
+            gap: 1rem;
+            padding-top: 0.5rem;
         }
         @media (min-width: 768px) {
             .filter-grid-row-2 {
                 flex-direction: row;
                 justify-content: space-between;
-                align-items: center; /* items-center */
+                align-items: center;
             }
         }
-        
+
         .quick-range-container {
             display: flex;
             flex-wrap: wrap; /* Allows wrapping on smaller screens */
-            gap: 0.75rem; /* gap-3 */
-            padding: 0.75rem; /* p-3 */
+            gap: 0.75rem;
+            padding: 0.75rem;
             background-color: white; /* bg-white */
-            border-radius: 0.5rem; /* rounded-lg */
-            border: 1px solid #e5e7eb; /* border border-gray-200 */
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb; /* border-gray-200 */
             box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.05); /* shadow-inner */
             align-items: center;
         }
         .quick-range-container span {
-            font-size: 0.875rem; /* text-sm */
+            font-size: 0.875rem;
             font-weight: 500; /* font-medium */
             color: #374151; /* text-gray-700 */
-            margin-right: 0.25rem; /* mr-1 */
+            margin-right: 0.25rem;
             flex-shrink: 0;
         }
 
         .quick-range-btn {
-            padding: 0.25rem 0.75rem; /* py-1 px-3 */
-            font-size: 0.75rem; /* text-xs */
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
             line-height: 1rem;
             font-weight: 600; /* font-semibold */
-            border-radius: 0.5rem; /* rounded-lg */
+            border-radius: 0.5rem;
             border: 1px solid #60a5fa; /* border-blue-400 */
             color: #1e40af; /* text-blue-800 */
             background-color: #dbeafe; /* bg-blue-100 */
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
-            transition: background-color 150ms ease-in-out; 
+            transition: background-color 150ms ease-in-out;
             cursor: pointer;
         }
         .quick-range-btn:hover {
             background-color: #bfdbfe; /* hover:bg-blue-200 */
         }
+
         /* Style for Clear Dates button */
         .quick-range-btn[data-range="clear"] {
             background-color: #e5e7eb; /* bg-gray-200 */
@@ -184,13 +185,13 @@
 
         /* Submit Button */
         #filterButton {
-            width: 100%; /* w-full */
-            padding: 0.5rem 1.5rem; /* py-2 px-6 */
-            border: 1px solid transparent; 
-            border-radius: 0.375rem; 
+            width: 100%;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid transparent;
+            border-radius: 0.375rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); /* shadow-lg */
-            font-weight: 500; 
-            color: white; 
+            font-weight: 500;
+            color: white;
             background-color: #10b981; /* bg-green-600 */
             transition: background-color 0.3s;
             cursor: pointer;
@@ -216,20 +217,20 @@
         /* REPORT DISPLAY STYLES */
         /* ---------------------------------- */
         #reportContainer {
-            margin-top: 2rem; /* mt-8 */
+            margin-top: 2rem;
             padding-top: 1rem;
             border-top: 1px solid #e5e7eb;
         }
         .report-section-title {
-            font-size: 1.5rem; /* text-2xl */
+            font-size: 1.5rem;
             font-weight: 700; /* font-bold */
             color: #1f2937; /* text-gray-800 */
-            border-bottom: 2px solid #e5e7eb; /* border-b pb-2 */
+            border-bottom: 2px solid #e5e7eb; /* border-b*/
             padding-bottom: 0.5rem;
             margin-top: 1.5rem;
             margin-bottom: 1rem;
         }
-        
+
         /* Filter Info Box */
         .filter-info-box {
             padding: 0.75rem; /* p-3 */
@@ -243,25 +244,11 @@
             font-weight: 700;
         }
 
-        /* Status Message */
-        #statusMessage {
-            margin-top: 1rem; /* mt-4 */
-            padding: 1rem; /* p-4 */
-            border-radius: 0.5rem; /* rounded-lg */
-            font-size: 1rem;
-            display: none; /* hidden */
-            text-align: center;
-        }
-        .bg-blue-100 { background-color: #dbeafe; }
-        .text-blue-800 { color: #1e40af; }
-        .bg-red-100 { background-color: #fee2e2; }
-        .text-red-800 { color: #991b1b; }
-        .bg-yellow-50 { background-color: #fffbeb; }
-
         /* Table Styling */
         .table-wrapper {
             overflow-x: auto;
-            border: 1px solid #e5e7eb; 
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow-md */
             margin-bottom: 1.5rem;
@@ -271,16 +258,16 @@
             width: 100%;
             min-width: 800px;
             border-collapse: collapse;
-            font-size: 0.875rem; 
+            font-size: 0.875rem;
         }
 
         .data-table thead {
             background-color: #f3f4f6; /* bg-gray-200 */
         }
         .data-table th {
-            padding: 0.75rem 0.75rem; /* px-3 py-3 */
+            padding: 0.75rem 0.75rem;
             text-align: left;
-            font-size: 0.75rem; /* text-xs */
+            font-size: 0.75rem;
             font-weight: 600;
             color: #4b5563; /* text-gray-600 */
             text-transform: uppercase;
@@ -294,13 +281,13 @@
             background-color: #f9fafb; /* hover:bg-gray-50 */
         }
         .data-table td {
-            padding: 0.5rem 0.75rem; /* px-3 py-2 */
+            padding: 0.5rem 0.75rem;
             white-space: nowrap; /* whitespace-nowrap */
             font-size: 0.875rem; /* text-sm */
             color: #374151; /* text-gray-700 */
         }
         .data-table td:nth-child(1) { /* S No */
-            font-weight: 600;
+            text-align: center;
             color: #1f2937;
         }
 
@@ -324,7 +311,7 @@
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
         }
         .class-card h3 {
-            font-size: 1.125rem; /* text-lg */
+            font-size: 1.125rem;
             font-weight: 600;
             color: #1d4ed8; /* text-blue-700 */
             margin-bottom: 0.75rem;
@@ -334,34 +321,63 @@
             border-collapse: collapse;
             font-size: 0.75rem;
         }
+        .breakdown-table tbody tr {
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .breakdown-table tbody tr:hover {
+            background-color: #f9fafb; /* hover:bg-gray-50 */
+        }
+        .breakdown-table thead {
+            background-color: #eff6ff;
+        }
+        .breakdown-table th {
+            padding: 0.75rem 0.75rem;
+            background-color: #eff6ff;
+            text-align: center;
+            color: #1e40af; /* text-blue-800 */
+            font-weight: 600;
+            text-transform: uppercase;
+        }
         .breakdown-table td {
             padding: 0.4rem;
             border: 1px solid #f3f4f6;
             font-weight: 400;
-        }
-        .breakdown-table th {
-            padding: 0.4rem;
-            border: 1px solid #f3f4f6;
             text-align: center;
-            font-weight: 400;
         }
-        .breakdown-table thead {
-            background-color: #eff6ff;
-            font-weight: 600;
+        .breakdown-table td:nth-child(2) { /* Module */
+            text-align: left;
         }
 
+        /* ---------------------------------- */
+        /* STATUS MESSAGE STYLES */
+        /* ---------------------------------- */
+        #statusMessage {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            display: none;
+            text-align: center;
+        }
+        .status-blue {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .status-red {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
     </style>
 </head>
-<body class="min-h-screen">
-
+<body>
     <div class="container">
         <div class="header">
-            <div class="logo-container"> 
-                <img src="https://drive.google.com/thumbnail?id=1FArQtL7K40Tyc-gU7UD-yjMw7GlwTumt" 
-                     alt="Chetana Tracker Logo" 
-                     style="height: 150px; max-width: 100%;" 
-                     class="block" 
-                     onerror="this.onerror=null; this.src='https://placehold.co/150x150/f0f9ff/000000?text=Logo+Unavailable'">
+            <div class="logo-container">
+                <img src="https://drive.google.com/thumbnail?id=1FArQtL7K40Tyc-gU7UD-yjMw7GlwTumt"
+                     alt="Chetana Tracker Logo"
+                     style="height: 150px; max-width: 100%;"
+                     onerror="this.onerror=null; this.src='https://placehold.co/600x100/fcb116/ffffff?font=montserrat&text=Learning+Space+Foundation'">
             </div>
 
             <div class="header-title-container">
@@ -370,14 +386,12 @@
             </div>
         </div>
 
-        <div id="statusMessage" class="hidden"></div>
-
         <div class="filter-section">
             <h2>Filter Sessions</h2>
             <form id="filterForm">
-                
+
                 <div class="filter-grid-row-1">
-                    
+
                     <div>
                         <label for="filterName">Coordinator</label>
                         <select id="filterName" name="name" class="select-field"></select>
@@ -398,7 +412,7 @@
                         <input type="date" id="filterEndDate" name="endDate" class="input-field">
                     </div>
 
-                    <div class="hidden md:block"></div> 
+                    <div class="hidden md:block"></div>
                 </div>
 
                 <div class="filter-grid-row-2">
@@ -417,9 +431,10 @@
                 </div>
             </form>
         </div>
+        <div id="statusMessage"></div>
 
         <div id="reportContainer">
-            <p class="text-gray-500 text-center">Use the filters above and click 'Run Report' to display session data.</p>
+            <p>Use the filters above and click <em>Run Report</em> to display session data.</p>
         </div>
     </div>
 
@@ -432,6 +447,18 @@
         const filterEndDate = document.getElementById('filterEndDate');
         const quickRangeButtons = document.querySelectorAll('.quick-range-btn');
 
+        /**
+         * Shows a status message.
+         * @param {string} text The message text.
+         * @param {string} className The status class (e.g., 'status-red').
+         */
+        function showMessage(text, className) {
+            statusMessage.className = `${className}`;
+            statusMessage.textContent = text;
+            statusMessage.style.display = 'block';
+            statusMessage.scrollIntoView({ behavior: 'smooth' });
+        }
+
         // --- Data Injection from Server ---
         const FILTER_DATA = (() => {
             try {
@@ -439,6 +466,7 @@
                 return JSON.parse('<?!= filterData ?>');
             } catch (e) {
                 console.error("Error loading filter data.", e);
+                showMessage('ERROR: Dynamic data failed to load.', 'status-red');
                 return { coordinators: [], schools: [], modules: [] };
             }
         })();
@@ -447,7 +475,7 @@
 
         /**
          * Formats a Date object to a YYYY-MM-DD string for input type="date".
-         * @param {Date} date 
+         * @param {Date} date
          * @returns {string}
          */
         function formatDate(date) {
@@ -471,20 +499,20 @@
                     // Start of the week (Standardizing to Monday=1)
                     startDate = new Date(today);
                     // Get day of week (0=Sun, 1=Mon, ... 6=Sat). Subtract 1 to make it 0=Mon, ... 6=Sun
-                    const day = (today.getDay() === 0 ? 6 : today.getDay() - 1); 
-                    startDate.setDate(today.getDate() - day); 
+                    const day = (today.getDay() === 0 ? 6 : today.getDay() - 1);
+                    startDate.setDate(today.getDate() - day);
 
                     // End of the week (Sunday of current week)
                     endDate = new Date(startDate);
                     endDate.setDate(startDate.getDate() + 6);
                     break;
-                
+
                 case 'lastWeek':
                     // Start of last week (Monday)
                     startDate = new Date(today);
                     const lastDay = (today.getDay() === 0 ? 6 : today.getDay() - 1);
                     // Go back to last week's Monday (current day - offset - 7)
-                    startDate.setDate(today.getDate() - lastDay - 7); 
+                    startDate.setDate(today.getDate() - lastDay - 7);
 
                     // End of last week (Sunday)
                     endDate = new Date(startDate);
@@ -495,7 +523,7 @@
                     // First day of current month
                     startDate = new Date(today.getFullYear(), today.getMonth(), 1);
                     // Last day of current month (set to today, not end of month, for current data)
-                    endDate = new Date(today); 
+                    endDate = new Date(today);
                     break;
 
                 case 'lastMonth':
@@ -509,7 +537,7 @@
                     filterStartDate.value = '';
                     filterEndDate.value = '';
                     return null;
-                
+
                 default:
                     return null;
             }
@@ -527,7 +555,7 @@
             button.addEventListener('click', () => {
                 const rangeType = button.getAttribute('data-range');
                 const dates = getRangeDates(rangeType);
-                
+
                 if (dates) {
                     filterStartDate.value = dates.start;
                     filterEndDate.value = dates.end;
@@ -556,22 +584,15 @@
             });
         }
 
-        function showMessage(text, className) {
-            statusMessage.className = `p-4 rounded-lg block ${className}`;
-            statusMessage.textContent = text;
-            statusMessage.style.display = 'block';
-            statusMessage.scrollIntoView({ behavior: 'smooth' });
-        }
-
         // --- Filtering and Reporting ---
 
         filterForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             filterButton.textContent = 'Loading...';
             filterButton.disabled = true;
-            reportContainer.innerHTML = 'Fetching and processing data...';
-            showMessage('Fetching and processing data...', 'bg-blue-100 text-blue-800');
+            reportContainer.innerHTML = '';
+            showMessage('Fetching data...', 'status-blue');
 
             const formData = new FormData(filterForm);
             const filters = Object.fromEntries(formData.entries());
@@ -586,7 +607,7 @@
         function onError(error) {
             filterButton.textContent = 'Run Report';
             filterButton.disabled = false;
-            showMessage('Error: Failed to fetch data. ' + error.message, 'bg-red-100 text-red-800');
+            showMessage('Error: Failed to fetch data. ' + error.message, 'status-red');
             console.error(error);
         }
 
@@ -609,7 +630,7 @@
             reportContainer.innerHTML += `
                 <h2 class="report-section-title">1. All Filtered Sessions (${data.report1.length} Total)</h2>
                 <div class="table-wrapper">
-                    ${data.report1.length > 0 ? renderTable(data.report1, data.report1Headers) : '<p class="p-4 bg-yellow-50 rounded-md">No sessions found for the applied filters.</p>'}
+                    ${data.report1.length > 0 ? renderTable(data.report1, data.report1Headers) : '<p class="filter-info-box">No sessions found for the applied filters.</p>'}
                 </div>
             `;
 
@@ -635,7 +656,7 @@
         // Helper function to render the main table (Report 1)
         function renderTable(data, headers) {
             let html = '<table class="data-table">';
-            
+
             // Table Header
             html += '<thead><tr>';
             headers.forEach(header => {
@@ -644,7 +665,7 @@
                 if(header === 'Class_Student_Counts') displayHeader = 'Classes & Students';
                 if(header === 'Learning Outcomes') displayHeader = 'Outcomes';
                 if(header === 'Challenges Faced') displayHeader = 'Challenges';
-                
+
                 html += `<th scope="col">${displayHeader}</th>`;
             });
             html += '</tr></thead>';
@@ -670,14 +691,14 @@
         // Helper function to render the class breakdown (Report 2)
         function renderClassBreakdown(breakdownData) {
             let html = '';
-            
+
             breakdownData.forEach(classItem => {
                 html += `
                     <div class="class-card">
                         <h3>Class: ${classItem.className}</h3>
-                        ${classItem.sessions.length > 0 
+                        ${classItem.sessions.length > 0
                             ? `
-                            <div class="overflow-x-auto">
+                            <div>
                                 <table class="breakdown-table">
                                     <thead>
                                         <tr>
@@ -690,17 +711,17 @@
                                     <tbody>
                                         ${classItem.sessions.map(s => `
                                             <tr>
-                                                <th>${s.date}</th>
+                                                <td>${s.date}</td>
                                                 <td>${s.module}</td>
-                                                <th>${s.students}</th>
-                                                <th>${s.coordinator}</th>
+                                                <td>${s.students}</td>
+                                                <td>${s.coordinator}</td>
                                             </tr>
                                         `).join('')}
                                     </tbody>
                                 </table>
                             </div>
                             `
-                            : '<p class="text-gray-500 p-2 text-sm">No sessions recorded for this class with the current filters.</p>'}
+                            : '<p class="filter-info-box">No sessions recorded for this class with the current filters.</p>'}
                     </div>
                 `;
             });
