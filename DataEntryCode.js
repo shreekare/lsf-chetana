@@ -209,15 +209,15 @@ function getFilteredData(filters) {
   const headers = values[0];
   let data = values.slice(1);
 
-  // Define header indices for easier access and removal
+  // Define header indices for easier access
   const indices = {
+    timestamp: headers.indexOf('Timestamp'),
     name: headers.indexOf('Name'),
     startTime: headers.indexOf('Session Start Time'),
-    school: headers.indexOf('School Name'),
+    endTime: headers.indexOf('Session End Time'), // KEEP THIS INDEX
     module: headers.indexOf('Module'),
+    school: headers.indexOf('School Name'),
     classCounts: headers.indexOf('Class_Student_Counts'),
-    endTime: headers.indexOf('Session End Time'),
-    timestamp: headers.indexOf('Timestamp')
   };
 
   // --- Apply Filters ---
@@ -258,39 +258,71 @@ function getFilteredData(filters) {
   const report1Headers = ['S No'];
 
   headers.forEach((header, index) => {
-      // Remove 'Timestamp' and 'Session End Time'
-      if (index === indices.endTime || index === indices.timestamp) {
+      // Remove 'Timestamp'
+      if (index === indices.timestamp) {
           return;
       }
 
       // Change 'Session Start Time' header to 'Date'
       if (index === indices.startTime) {
           report1Headers.push('Date');
-          columnsToKeepIndices.push(index);
+          // We will push the actual value manually in the loop below
+          return;
+      }
+
+      // Remove 'Session End Time' (we use its index, but don't add its header or index to the loop)
+      if (index === indices.endTime) {
           return;
       }
 
       // Keep all other columns and headers
+      // Note: This collects Name, Module, School Name, Class_Student_Counts, Learning Outcomes, Challenges Faced
       report1Headers.push(header);
       columnsToKeepIndices.push(index);
   });
+
+  // *** NEW: Insert the DURATION header after the DATE header ***
+  const dateHeaderIndex = report1Headers.indexOf('Date');
+  if (dateHeaderIndex !== -1) {
+      report1Headers.splice(dateHeaderIndex + 1, 0, 'Duration');
+  }
+  // The columnsToKeepIndices array will contain indices for all columns except Timestamp, Session Start Time, and Session End Time.
+  // The final row construction will handle inserting Date and DURATION separately.
 
   // 4. Create the final data array for the table
   const allSessions = data.map((row, index) => {
     const newRow = [index + 1]; // Start with Serial No.
 
-    columnsToKeepIndices.forEach(colIndex => {
-      let cellValue = row[colIndex];
+    const startTime = row[indices.startTime];
+    const endTime = row[indices.endTime];
+    let durationMinutes = ''; // Default for safety
 
-      // Print only the date part for the Session Start Time (now 'Date')
-      if (colIndex === indices.startTime && cellValue instanceof Date) {
-        cellValue = cellValue.toLocaleDateString();
-      } else if (cellValue instanceof Date) {
-        // Format any other remaining Date objects with full locale string
-        cellValue = cellValue.toLocaleString();
-      }
+    // Calculate Duration if both are valid Date objects
+    if (startTime instanceof Date && endTime instanceof Date) {
+        // Duration in milliseconds
+        const durationMs = endTime.getTime() - startTime.getTime();
+        // Convert to minutes, rounded to 2 decimal places
+        durationMinutes = (durationMs / (1000 * 60)).toFixed(0); // Round to nearest minute
+    }
 
-      newRow.push(cellValue);
+    // Insert the 'Date' column value
+    let dateValue = startTime;
+    if (dateValue instanceof Date) {
+        dateValue = dateValue.toLocaleDateString();
+    }
+
+    newRow.push(row[indices.name]);
+    newRow.push(dateValue);
+    newRow.push(durationMinutes);
+
+
+    // Insert the rest of the columns
+    headers.forEach((header, colIndex) => {
+        // Skip Timestamp, Session Start Time (already inserted as Date), and Session End Time (already used for calculation)
+        if (colIndex === indices.name || colIndex === indices.timestamp || colIndex === indices.startTime || colIndex === indices.endTime) {
+            return;
+        }
+        newRow.push(row[colIndex]);
     });
 
     return newRow;
@@ -433,6 +465,6 @@ function doGetDashboard() {
 }
 
 function doGet() {
-  return doGetDataEntry();
-  // return doGetDashboard();
+  // return doGetDataEntry();
+  return doGetDashboard();
 }
