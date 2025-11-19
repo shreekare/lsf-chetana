@@ -3,11 +3,159 @@
 <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Chetana Tracker Dashboard</title> <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f7fafc; }
-        .table-auto th, .table-auto td { padding: 8px 12px; border: 1px solid #e2e8f0; }
+        /* ---------------------------------- */
+        /* BASE & LAYOUT STYLES */
+        /* ---------------------------------- */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f7fafc; /* bg-gray-50 */
+            padding: 1rem; /* p-4 */
+            min-height: 100vh; 
+            text-align: left; /* Default text alignment */
+        }
         
+        @media (min-width: 640px) {
+            body { padding: 2rem; } /* sm:p-8 */
+        }
+
+        .container {
+            background-color: white;
+            padding: 1.5rem; /* p-6 */
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-2xl */
+            border: 1px solid #f3f4f6; /* border border-gray-100 */
+            margin: 2rem auto; 
+            width: 100%;
+            max-width: 1280px; /* max-w-7xl */
+            font-size: 1rem;
+        }
+
+        /* ---------------------------------- */
+        /* HEADER STYLES */
+        /* ---------------------------------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* items-center */
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .logo-container {
+            flex-shrink: 0; /* flex-shrink-0 */
+            margin-right: 1.5rem; /* mr-6 */
+        }
+        .header-title-container {
+            flex: 1 1 0%; 
+            min-width: 0;
+            text-align: right;
+        }
+        .header-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            color: #1f2937; /* text-gray-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+        }
+        .header-subtitle {
+            color: #4b5563; /* text-gray-600 */
+            font-size: 1rem;
+        }
+        
+        /* ---------------------------------- */
+        /* FILTER FORM STYLES */
+        /* ---------------------------------- */
+        .filter-section {
+            background-color: #f9fafb; /* bg-gray-50 */
+            padding: 1.5rem; /* p-6 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.05); /* shadow-inner */
+            margin-bottom: 2rem; /* mb-8 */
+            border: 1px solid #e5e7eb; /* border border-gray-200 */
+        }
+        
+        .filter-section h2 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            color: #374151; /* text-gray-700 */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+
+        .filter-grid-row-1 {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem; /* gap-4 */
+            align-items: flex-end; /* items-end */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        @media (min-width: 768px) {
+            .filter-grid-row-1 {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            color: #374151; /* text-gray-700 */
+        }
+
+        .input-field, .select-field {
+            margin-top: 0.25rem; /* mt-1 */
+            display: block;
+            width: 100%;
+            padding: 0.5rem 0.75rem; /* py-2 */
+            border-radius: 0.375rem; /* rounded-md */
+            border: 1px solid #d1d5db; /* border-gray-300 */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            font-size: 1rem;
+        }
+        .input-field:focus, .select-field:focus {
+            outline: none;
+            border-color: #3b82f6; /* focus:border-blue-500 */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* focus:ring-blue-500 */
+        }
+
+        #filterStartDate, #filterEndDate {
+          width: 90%;
+        }
+
+        /* Quick Range Buttons Row (Row 2) */
+        .filter-grid-row-2 {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* items-start */
+            gap: 1rem; /* gap-4 */
+            padding-top: 0.5rem; /* pt-2 */
+        }
+        @media (min-width: 768px) {
+            .filter-grid-row-2 {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center; /* items-center */
+            }
+        }
+        
+        .quick-range-container {
+            display: flex;
+            flex-wrap: wrap; /* Allows wrapping on smaller screens */
+            gap: 0.75rem; /* gap-3 */
+            padding: 0.75rem; /* p-3 */
+            background-color: white; /* bg-white */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e5e7eb; /* border border-gray-200 */
+            box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.05); /* shadow-inner */
+            align-items: center;
+        }
+        .quick-range-container span {
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            color: #374151; /* text-gray-700 */
+            margin-right: 0.25rem; /* mr-1 */
+            flex-shrink: 0;
+        }
+
         .quick-range-btn {
             padding: 0.25rem 0.75rem; /* py-1 px-3 */
             font-size: 0.75rem; /* text-xs */
@@ -24,15 +172,191 @@
         .quick-range-btn:hover {
             background-color: #bfdbfe; /* hover:bg-blue-200 */
         }
+        /* Style for Clear Dates button */
+        .quick-range-btn[data-range="clear"] {
+            background-color: #e5e7eb; /* bg-gray-200 */
+            color: #374151; /* text-gray-700 */
+            border-color: #d1d5db; /* border-gray-300 */
+        }
+        .quick-range-btn[data-range="clear"]:hover {
+            background-color: #d1d5db; /* hover:bg-gray-300 */
+        }
+
+        /* Submit Button */
+        #filterButton {
+            width: 100%; /* w-full */
+            padding: 0.5rem 1.5rem; /* py-2 px-6 */
+            border: 1px solid transparent; 
+            border-radius: 0.375rem; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); /* shadow-lg */
+            font-weight: 500; 
+            color: white; 
+            background-color: #10b981; /* bg-green-600 */
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            #filterButton {
+                width: auto; /* md:w-auto */
+            }
+        }
+        #filterButton:hover {
+            background-color: #059669; /* hover:bg-green-700 */
+        }
+        #filterButton:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5); /* focus:ring-green-500 */
+        }
+        #filterButton:disabled {
+            opacity: 0.5; /* disabled:opacity-50 */
+            cursor: not-allowed;
+        }
+
+        /* ---------------------------------- */
+        /* REPORT DISPLAY STYLES */
+        /* ---------------------------------- */
+        #reportContainer {
+            margin-top: 2rem; /* mt-8 */
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        .report-section-title {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700; /* font-bold */
+            color: #1f2937; /* text-gray-800 */
+            border-bottom: 2px solid #e5e7eb; /* border-b pb-2 */
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Filter Info Box */
+        .filter-info-box {
+            padding: 0.75rem; /* p-3 */
+            background-color: #eff6ff; /* bg-indigo-50 */
+            border-radius: 0.375rem; /* rounded-md */
+            color: #1e40af; /* text-indigo-800 */
+            font-size: 0.875rem; /* text-sm */
+            margin-bottom: 1.5rem;
+        }
+        .filter-info-box strong {
+            font-weight: 700;
+        }
+
+        /* Status Message */
+        #statusMessage {
+            margin-top: 1rem; /* mt-4 */
+            padding: 1rem; /* p-4 */
+            border-radius: 0.5rem; /* rounded-lg */
+            font-size: 1rem;
+            display: none; /* hidden */
+            text-align: center;
+        }
+        .bg-blue-100 { background-color: #dbeafe; }
+        .text-blue-800 { color: #1e40af; }
+        .bg-red-100 { background-color: #fee2e2; }
+        .text-red-800 { color: #991b1b; }
+        .bg-yellow-50 { background-color: #fffbeb; }
+
+        /* Table Styling */
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid #e5e7eb; 
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow-md */
+            margin-bottom: 1.5rem;
+        }
+
+        .data-table {
+            width: 100%;
+            min-width: 800px;
+            border-collapse: collapse;
+            font-size: 0.875rem; 
+        }
+
+        .data-table thead {
+            background-color: #f3f4f6; /* bg-gray-200 */
+        }
+        .data-table th {
+            padding: 0.75rem 0.75rem; /* px-3 py-3 */
+            text-align: left;
+            font-size: 0.75rem; /* text-xs */
+            font-weight: 600;
+            color: #4b5563; /* text-gray-600 */
+            text-transform: uppercase;
+        }
+
+        .data-table tbody tr {
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .data-table tbody tr:hover {
+            background-color: #f9fafb; /* hover:bg-gray-50 */
+        }
+        .data-table td {
+            padding: 0.5rem 0.75rem; /* px-3 py-2 */
+            white-space: nowrap; /* whitespace-nowrap */
+            font-size: 0.875rem; /* text-sm */
+            color: #374151; /* text-gray-700 */
+        }
+        .data-table td:nth-child(1) { /* S No */
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* Class Breakdown (Report 2) */
+        .class-breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .class-breakdown-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .class-card {
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        .class-card h3 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600;
+            color: #1d4ed8; /* text-blue-700 */
+            margin-bottom: 0.75rem;
+        }
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+        .breakdown-table td {
+            padding: 0.4rem;
+            border: 1px solid #f3f4f6;
+            font-weight: 400;
+        }
+        .breakdown-table th {
+            padding: 0.4rem;
+            border: 1px solid #f3f4f6;
+            text-align: center;
+            font-weight: 400;
+        }
+        .breakdown-table thead {
+            background-color: #eff6ff;
+            font-weight: 600;
+        }
+
     </style>
 </head>
-<body class="p-4 sm:p-8 min-h-screen text-base">
+<body class="min-h-screen">
 
-    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-100 mx-auto w-full max-w-7xl">
-        <!-- HEADER ROW: Logo (Left) and Title (Right & vertically centered) -->
-        <div class="flex justify-between items-center mb-6">
-            <!-- Logo (Left) -->
-            <div class="flex-shrink-0 mr-6"> 
+    <div class="container">
+        <div class="header">
+            <div class="logo-container"> 
                 <img src="https://drive.google.com/thumbnail?id=1FArQtL7K40Tyc-gU7UD-yjMw7GlwTumt" 
                      alt="Chetana Tracker Logo" 
                      style="height: 150px; max-width: 100%;" 
@@ -40,74 +364,61 @@
                      onerror="this.onerror=null; this.src='https://placehold.co/150x150/f0f9ff/000000?text=Logo+Unavailable'">
             </div>
 
-            <!-- Title and Description (Right Horizontally and Center Vertically) -->
-            <div class="flex-1 min-w-0 text-right">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">Chetana Tracker Dashboard</h1>
-                <p class="text-gray-600">Filter the session data and view reports.</p>
+            <div class="header-title-container">
+                <h1 class="header-title">Chetana Tracker Dashboard</h1>
+                <p class="header-subtitle">Filter the session data and view reports.</p>
             </div>
         </div>
 
-        <!-- Status Message Box -->
-        <div id="statusMessage" class="mt-4 p-4 rounded-lg text-lg hidden"></div>
+        <div id="statusMessage" class="hidden"></div>
 
-        <!-- Filters Form -->
-        <div class="bg-gray-50 p-6 rounded-lg shadow-inner mb-8 border border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Filter Sessions</h2>
+        <div class="filter-section">
+            <h2>Filter Sessions</h2>
             <form id="filterForm">
                 
-                <!-- Row 1: Main Filters -->
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-4">
+                <div class="filter-grid-row-1">
                     
-                    <!-- Coordinator Filter -->
                     <div>
-                        <label for="filterName" class="block text-sm font-medium text-gray-700">Coordinator</label>
-                        <select id="filterName" name="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2"></select>
+                        <label for="filterName">Coordinator</label>
+                        <select id="filterName" name="name" class="select-field"></select>
                     </div>
 
-                    <!-- School Filter -->
                     <div>
-                        <label for="filterSchool" class="block text-sm font-medium text-gray-700">School</label>
-                        <select id="filterSchool" name="school" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2"></select>
+                        <label for="filterSchool">School</label>
+                        <select id="filterSchool" name="school" class="select-field"></select>
                     </div>
 
-                    <!-- Start Date Filter -->
                     <div>
-                        <label for="filterStartDate" class="block text-sm font-medium text-gray-700">Start Date (Optional)</label>
-                        <input type="date" id="filterStartDate" name="startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2">
+                        <label for="filterStartDate">Start Date (Optional)</label>
+                        <input type="date" id="filterStartDate" name="startDate" class="input-field">
                     </div>
 
-                    <!-- End Date Filter -->
                     <div>
-                        <label for="filterEndDate" class="block text-sm font-medium text-gray-700">End Date (Optional)</label>
-                        <input type="date" id="filterEndDate" name="endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2">
+                        <label for="filterEndDate">End Date (Optional)</label>
+                        <input type="date" id="filterEndDate" name="endDate" class="input-field">
                     </div>
 
-                    <!-- Submit Button Placeholder -->
                     <div class="hidden md:block"></div> 
                 </div>
 
-                <!-- Row 2: Quick Range Buttons -->
-                <div class="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4 pt-2">
-                    <div class="flex text-center gap-3 p-3 bg-white rounded-lg border border-gray-200 shadow-inner">
-                        <span class="text-sm font-medium text-gray-700 mr-1">Quick Date Ranges:</span>
+                <div class="filter-grid-row-2">
+                    <div class="quick-range-container">
+                        <span>Quick Date Ranges:</span>
                         <button type="button" class="quick-range-btn" data-range="thisWeek">This Week</button>
                         <button type="button" class="quick-range-btn" data-range="lastWeek">Last Week</button>
                         <button type="button" class="quick-range-btn" data-range="thisMonth">This Month</button>
                         <button type="button" class="quick-range-btn" data-range="lastMonth">Last Month</button>
-                        <button type="button" class="quick-range-btn bg-gray-200 text-gray-700 border-gray-300 hover:bg-gray-300" data-range="clear">Clear Dates</button>
+                        <button type="button" class="quick-range-btn" data-range="clear">Clear Dates</button>
                     </div>
 
-                    <!-- Submit Button -->
-                    <button type="submit" id="filterButton"
-                            class="w-full md:w-auto py-2 px-6 border border-transparent rounded-md shadow-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 disabled:opacity-50">
+                    <button type="submit" id="filterButton">
                         Run Report
                     </button>
                 </div>
             </form>
         </div>
 
-        <!-- Report Display Area -->
-        <div id="reportContainer" class="mt-8 space-y-12">
+        <div id="reportContainer">
             <p class="text-gray-500 text-center">Use the filters above and click 'Run Report' to display session data.</p>
         </div>
     </div>
@@ -124,11 +435,11 @@
         // --- Data Injection from Server ---
         const FILTER_DATA = (() => {
             try {
-                // IMPORTANT: Template variable name must match the one in DashboardCode.gs
+                // IMPORTANT: Template variable name must match the one in Apps Script (filterData)
                 return JSON.parse('<?!= filterData ?>');
             } catch (e) {
                 console.error("Error loading filter data.", e);
-                return { coordinators: [], schools: [] };
+                return { coordinators: [], schools: [], modules: [] };
             }
         })();
 
@@ -157,13 +468,13 @@
 
             switch (rangeType) {
                 case 'thisWeek':
-                    // Start of the week (Monday is 1, Sunday is 0. Standardizing to Monday=1)
+                    // Start of the week (Standardizing to Monday=1)
                     startDate = new Date(today);
                     // Get day of week (0=Sun, 1=Mon, ... 6=Sat). Subtract 1 to make it 0=Mon, ... 6=Sun
                     const day = (today.getDay() === 0 ? 6 : today.getDay() - 1); 
                     startDate.setDate(today.getDate() - day); 
 
-                    // End of the week (Sunday)
+                    // End of the week (Sunday of current week)
                     endDate = new Date(startDate);
                     endDate.setDate(startDate.getDate() + 6);
                     break;
@@ -183,8 +494,8 @@
                 case 'thisMonth':
                     // First day of current month
                     startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-                    // Last day of current month
-                    endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    // Last day of current month (set to today, not end of month, for current data)
+                    endDate = new Date(today); 
                     break;
 
                 case 'lastMonth':
@@ -231,20 +542,22 @@
             const schoolSelect = document.getElementById('filterSchool');
 
             // 1. Coordinator Filter
-            nameSelect.innerHTML = '<option value="All Coordinators" selected>All Coordinators</option>';
-            FILTER_DATA.coordinators.forEach(name => {
-                nameSelect.innerHTML += `<option value="${name}">${name}</option>`;
+            nameSelect.innerHTML = ''; // Clear existing options
+            FILTER_DATA.coordinators.sort().forEach(name => {
+                const isSelected = (name === 'All Coordinators') ? 'selected' : '';
+                nameSelect.innerHTML += `<option value="${name}" ${isSelected}>${name}</option>`;
             });
 
             // 2. School Filter
-            schoolSelect.innerHTML = '<option value="All Schools" selected>All Schools</option>';
-            FILTER_DATA.schools.forEach(school => {
-                schoolSelect.innerHTML += `<option value="${school}">${school}</option>`;
+            schoolSelect.innerHTML = ''; // Clear existing options
+            FILTER_DATA.schools.sort().forEach(school => {
+                const isSelected = (school === 'All Schools') ? 'selected' : '';
+                schoolSelect.innerHTML += `<option value="${school}" ${isSelected}>${school}</option>`;
             });
         }
 
         function showMessage(text, className) {
-            statusMessage.className = `mt-4 p-4 rounded-lg block ${className}`;
+            statusMessage.className = `p-4 rounded-lg block ${className}`;
             statusMessage.textContent = text;
             statusMessage.style.display = 'block';
             statusMessage.scrollIntoView({ behavior: 'smooth' });
@@ -257,13 +570,13 @@
             
             filterButton.textContent = 'Loading...';
             filterButton.disabled = true;
-            reportContainer.innerHTML = '';
+            reportContainer.innerHTML = 'Fetching and processing data...';
             showMessage('Fetching and processing data...', 'bg-blue-100 text-blue-800');
 
             const formData = new FormData(filterForm);
             const filters = Object.fromEntries(formData.entries());
 
-            // IMPORTANT: Call the server-side function defined in DashboardCode.gs
+            // IMPORTANT: Call the server-side function defined in code.js
             google.script.run
                 .withSuccessHandler(renderReports)
                 .withFailureHandler(onError)
@@ -285,7 +598,7 @@
 
             // Display filters used
             let filterDisplay = `
-                <div class="p-3 bg-indigo-50 rounded-md text-sm text-indigo-800">
+                <div class="filter-info-box">
                     <p><strong>Filters Applied:</strong> Coordinator: ${data.filterValues.name}, School: ${data.filterValues.school}, Dates: ${data.filterValues.startDate || 'Any'} to ${data.filterValues.endDate || 'Any'}</p>
                 </div>
             `;
@@ -294,8 +607,8 @@
 
             // --- Report 1: List of all sessions ---
             reportContainer.innerHTML += `
-                <h2 class="text-2xl font-bold text-gray-800 border-b pb-2">1. All Filtered Sessions (${data.report1.length} Total)</h2>
-                <div class="overflow-x-auto shadow-md rounded-lg">
+                <h2 class="report-section-title">1. All Filtered Sessions (${data.report1.length} Total)</h2>
+                <div class="table-wrapper">
                     ${data.report1.length > 0 ? renderTable(data.report1, data.report1Headers) : '<p class="p-4 bg-yellow-50 rounded-md">No sessions found for the applied filters.</p>'}
                 </div>
             `;
@@ -303,38 +616,41 @@
             // --- Report 2: Class Breakdown (Conditional) ---
             if (data.report2 && data.report2.length > 0) {
                  reportContainer.innerHTML += `
-                    <h2 class="text-2xl font-bold text-gray-800 border-b pb-2 pt-4">2. Class-wise Session Breakdown for ${data.filterValues.school}</h2>
-                    <div class="space-y-6">
+                    <h2 class="report-section-title">2. Class-wise Session Breakdown for ${data.filterValues.school}</h2>
+                    <div class="class-breakdown-grid">
                         ${renderClassBreakdown(data.report2)}
                     </div>
                 `;
-            } else if (data.filterValues.school === 'All Schools') {
+            } else if (data.filterValues.school !== 'All Schools') {
                 reportContainer.innerHTML += `
-                    <p class="p-4 bg-blue-50 rounded-md text-blue-800 border border-blue-200">Class breakdown report is available only when filtering by a single school.</p>
+                    <p class="filter-info-box">No session data found for the selected school within the date range, or class data is not available on the 'Schools' sheet.</p>
+                `;
+            } else {
+                 reportContainer.innerHTML += `
+                    <p class="filter-info-box">Class breakdown report is available only when filtering by a single school.</p>
                 `;
             }
         }
 
         // Helper function to render the main table (Report 1)
         function renderTable(data, headers) {
-            let html = '<table class="min-w-full divide-y divide-gray-200 table-auto">';
+            let html = '<table class="data-table">';
             
             // Table Header
-            html += '<thead class="bg-gray-200"><tr>';
+            html += '<thead><tr>';
             headers.forEach(header => {
-                // The server-side script now handles the removal and renaming ('Date' instead of 'Session Start Time').
-                // We only need to apply custom names to the remaining fields if they are too long.
                 let displayHeader = header;
+                // Clean up long header names for the dashboard view
                 if(header === 'Class_Student_Counts') displayHeader = 'Classes & Students';
-                if(header === 'Learning Outcomes observed') displayHeader = 'Outcomes';
-                if(header === 'Challenges faced') displayHeader = 'Challenges';
+                if(header === 'Learning Outcomes') displayHeader = 'Outcomes';
+                if(header === 'Challenges Faced') displayHeader = 'Challenges';
                 
-                html += `<th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">${displayHeader}</th>`;
+                html += `<th scope="col">${displayHeader}</th>`;
             });
             html += '</tr></thead>';
 
             // Table Body
-            html += '<tbody class="bg-white divide-y divide-gray-200">';
+            html += '<tbody>';
             data.forEach(row => {
                 html += '<tr>';
                 row.forEach(cell => {
@@ -343,7 +659,7 @@
                     if (displayCell.length > 50) {
                         displayCell = displayCell.substring(0, 50) + '...';
                     }
-                    html += `<td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">${displayCell}</td>`;
+                    html += `<td>${displayCell}</td>`;
                 });
                 html += '</tr>';
             });
@@ -357,34 +673,34 @@
             
             breakdownData.forEach(classItem => {
                 html += `
-                    <div class="border border-gray-300 rounded-lg p-4 bg-white shadow-md">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">Class: ${classItem.className}</h3>
+                    <div class="class-card">
+                        <h3>Class: ${classItem.className}</h3>
                         ${classItem.sessions.length > 0 
                             ? `
                             <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg shadow-sm">
-                                    <thead class="bg-blue-50">
+                                <table class="breakdown-table">
+                                    <thead>
                                         <tr>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Date</th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Module</th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Attendance</th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Coordinator</th>
+                                            <th>Date</th>
+                                            <th>Module</th>
+                                            <th>Attendance</th>
+                                            <th>Coordinator</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="bg-white divide-y divide-gray-100">
+                                    <tbody>
                                         ${classItem.sessions.map(s => `
                                             <tr>
-                                                <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-800">${s.date}</td>
-                                                <td class="px-4 py-2 text-sm text-gray-700">${s.module}</td>
-                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-green-600 font-semibold">${s.students}</td>
-                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-purple-700">${s.coordinator}</td>
+                                                <th>${s.date}</th>
+                                                <td>${s.module}</td>
+                                                <th>${s.students}</th>
+                                                <th>${s.coordinator}</th>
                                             </tr>
                                         `).join('')}
                                     </tbody>
                                 </table>
                             </div>
                             `
-                            : '<p class="text-gray-500 p-2">No sessions recorded for this class with the current filters.</p>'}
+                            : '<p class="text-gray-500 p-2 text-sm">No sessions recorded for this class with the current filters.</p>'}
                     </div>
                 `;
             });
