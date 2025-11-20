@@ -201,6 +201,17 @@ function getFilteredData(filters) {
   const sheet = ss.getSheetByName('Tracker');
   if (!sheet) return [];
 
+  // Helper function to format date/time as 'd mmm HH:MM' (e.g., '20 Jan 14:30')
+  const formatDateCustom = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) return '';
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const d = date.getDate(); // Date without leading zero
+    const mmm = months[date.getMonth()];
+    const HH = String(date.getHours()).padStart(2, '0'); // 24-hour format
+    const MM = String(date.getMinutes()).padStart(2, '0');
+    return `${d} ${mmm} ${HH}:${MM}`;
+  };
+
   // Get all data, skipping headers
   const range = sheet.getDataRange();
   const values = range.getValues();
@@ -214,7 +225,7 @@ function getFilteredData(filters) {
     timestamp: headers.indexOf('Timestamp'),
     name: headers.indexOf('Name'),
     startTime: headers.indexOf('Session Start Time'),
-    endTime: headers.indexOf('Session End Time'), // KEEP THIS INDEX
+    endTime: headers.indexOf('Session End Time'), 
     module: headers.indexOf('Module'),
     school: headers.indexOf('School Name'),
     classCounts: headers.indexOf('Class_Student_Counts'),
@@ -252,6 +263,13 @@ function getFilteredData(filters) {
   }
 
   // --- Prepare Report 1 (All Sessions) ---
+  
+  // *** Sort the filtered data by Session Start Time (ascending) ***
+  data.sort((a, b) => {
+      const dateA = a[indices.startTime] instanceof Date ? a[indices.startTime].getTime() : 0;
+      const dateB = b[indices.startTime] instanceof Date ? b[indices.startTime].getTime() : 0;
+      return dateA - dateB;
+  });
 
   // Determine which columns to KEEP and what their NEW header names should be
   const columnsToKeepIndices = [];
@@ -266,7 +284,6 @@ function getFilteredData(filters) {
       // Change 'Session Start Time' header to 'Date'
       if (index === indices.startTime) {
           report1Headers.push('Date');
-          // We will push the actual value manually in the loop below
           return;
       }
 
@@ -276,18 +293,15 @@ function getFilteredData(filters) {
       }
 
       // Keep all other columns and headers
-      // Note: This collects Name, Module, School Name, Class_Student_Counts, Learning Outcomes, Challenges Faced
       report1Headers.push(header);
       columnsToKeepIndices.push(index);
   });
 
-  // *** NEW: Insert the DURATION header after the DATE header ***
+  // *** DURATION Column Handling ***
   const dateHeaderIndex = report1Headers.indexOf('Date');
   if (dateHeaderIndex !== -1) {
       report1Headers.splice(dateHeaderIndex + 1, 0, 'Duration');
   }
-  // The columnsToKeepIndices array will contain indices for all columns except Timestamp, Session Start Time, and Session End Time.
-  // The final row construction will handle inserting Date and DURATION separately.
 
   // 4. Create the final data array for the table
   const allSessions = data.map((row, index) => {
@@ -297,23 +311,19 @@ function getFilteredData(filters) {
     const endTime = row[indices.endTime];
     let durationMinutes = ''; // Default for safety
 
-    // Calculate Duration if both are valid Date objects
-    if (startTime instanceof Date && endTime instanceof Date) {
-        // Duration in milliseconds
-        const durationMs = endTime.getTime() - startTime.getTime();
-        // Convert to minutes, rounded to 2 decimal places
-        durationMinutes = (durationMs / (1000 * 60)).toFixed(0); // Round to nearest minute
-    }
-
-    // Insert the 'Date' column value
+    // Calculate Duration
     let dateValue = startTime;
-    if (dateValue instanceof Date) {
-        dateValue = dateValue.toLocaleDateString();
+    if (startTime instanceof Date) {
+      if (endTime instanceof Date) {
+        const durationMs = endTime.getTime() - startTime.getTime();
+        durationMinutes = (durationMs / (1000 * 60)).toFixed(0); // Round to nearest minute
+      }
+      dateValue = formatDateCustom(startTime);
     }
 
     newRow.push(row[indices.name]);
     newRow.push(dateValue);
-    newRow.push(durationMinutes);
+    newRow.push(durationMinutes + ' min');
 
 
     // Insert the rest of the columns
@@ -322,7 +332,15 @@ function getFilteredData(filters) {
         if (colIndex === indices.name || colIndex === indices.timestamp || colIndex === indices.startTime || colIndex === indices.endTime) {
             return;
         }
-        newRow.push(row[colIndex]);
+
+        let cellValue = row[colIndex];
+
+        // Format any other remaining Date objects with full locale string
+        if (cellValue instanceof Date) {
+            cellValue = cellValue.toLocaleString();
+        }
+
+        newRow.push(cellValue);
     });
 
     return newRow;
