@@ -269,7 +269,7 @@
                         onchange="populateClassInputs()" class="select-field">
                     <option value="" disabled selected>Select School</option>
                 </select>
-    
+
                 <div id="classInputsContainer">
                     <p class="placeholder-text">Please select a school to enter number of students attended the session.</p>
                 </div>
@@ -391,6 +391,26 @@
             }
         }
 
+        /**
+         * Event handler to automatically adjust time on blur (focus loss).
+         * @param {Event} event The blur event object.
+         */
+        function handleTimeInputBlur(event) {
+            const input = event.target;
+            if (input.value) {
+                let dateObj = new Date(input.value);
+                if (dateObj.getHours() < 7) {
+                    // Add 12 hours (12 * 60 * 60 * 1000 milliseconds)
+                    dateObj.setTime(dateObj.getTime() + 12 * 60 * 60 * 1000);
+                    input.value = formatDateTimeLocal(dateObj);
+                    showMessage('Time adjusted: Assumed PM for time entered before 7:00AM', 'status-yellow');
+                }
+            }
+        }
+
+        // --- attach blur events to adjust time corrections ---
+        startTimeInput.addEventListener('blur', handleTimeInputBlur);
+        endTimeInput.addEventListener('blur', handleTimeInputBlur);
 
         // --- Submission Logic ---
         submissionForm.addEventListener('submit', function(e) {
@@ -416,8 +436,8 @@
                 return;
             }
 
-            if (durationInMinutes < 30 || durationInMinutes > 180) {
-                 showMessage('Session duration must be between 30 min and 3 hours.', 'status-red');
+            if (durationInMinutes < 30 || durationInMinutes > 480) {
+                 showMessage('Session duration must be between 30 min and 8 hours.', 'status-red');
                  return;
             }
 
@@ -448,7 +468,7 @@
                 sessionEndTime: endTimeInputVal,
                 module: document.getElementById('module').value,
                 schoolName: document.getElementById('schoolName').value,
-                classCounts: classCountsArray.join(', '), // Format as "6a: 15, 7b: 20"
+                classCounts: "'" + classCountsArray.join(', '), // Format as "6a: 15, 7b: 20"
                 learningOutcomes: document.getElementById('learningOutcomes').value,
                 challengesFaced: document.getElementById('challengesFaced').value
             };

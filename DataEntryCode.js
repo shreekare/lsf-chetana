@@ -1,6 +1,5 @@
 /**
  * Global variable for the Spreadsheet ID.
- * REPLACE 'YOUR_SPREADSHEET_ID_HERE' with the ID from your Sheet's URL.
  * The ID is the long string between /d/ and /edit.
  */
 const SPREADSHEET_ID = '16N9hWBuBlwnA598ci5tKM8252-WORzQNe7TRg8YkHgQ';
@@ -272,36 +271,23 @@ function getFilteredData(filters) {
   });
 
   // Determine which columns to KEEP and what their NEW header names should be
-  const columnsToKeepIndices = [];
+  const columnsToKeepIndices = new Set();
   const report1Headers = ['S No'];
 
   headers.forEach((header, index) => {
-      // Remove 'Timestamp'
       if (index === indices.timestamp) {
-          return;
+        return;
       }
-
-      // Change 'Session Start Time' header to 'Date'
+      columnsToKeepIndices.add(index);
       if (index === indices.startTime) {
-          report1Headers.push('Date');
-          return;
+        report1Headers.push('Date');
+      } else if (index === indices.endTime) {
+        // conver the end time column to Duration
+        report1Headers.push('Duration');
+      } else {
+        report1Headers.push(header);
       }
-
-      // Remove 'Session End Time' (we use its index, but don't add its header or index to the loop)
-      if (index === indices.endTime) {
-          return;
-      }
-
-      // Keep all other columns and headers
-      report1Headers.push(header);
-      columnsToKeepIndices.push(index);
   });
-
-  // *** DURATION Column Handling ***
-  const dateHeaderIndex = report1Headers.indexOf('Date');
-  if (dateHeaderIndex !== -1) {
-      report1Headers.splice(dateHeaderIndex + 1, 0, 'Duration');
-  }
 
   // 4. Create the final data array for the table
   const allSessions = data.map((row, index) => {
@@ -309,38 +295,26 @@ function getFilteredData(filters) {
 
     const startTime = row[indices.startTime];
     const endTime = row[indices.endTime];
-    let durationMinutes = ''; // Default for safety
-
-    // Calculate Duration
-    let dateValue = startTime;
+    let durationMinutes = 0;
+    let startDate = startTime;
     if (startTime instanceof Date) {
+      startDate = formatDateCustom(startTime);
       if (endTime instanceof Date) {
         const durationMs = endTime.getTime() - startTime.getTime();
         durationMinutes = (durationMs / (1000 * 60)).toFixed(0); // Round to nearest minute
       }
-      dateValue = formatDateCustom(startTime);
     }
 
-    newRow.push(row[indices.name]);
-    newRow.push(dateValue);
-    newRow.push(durationMinutes + ' min');
-
-
-    // Insert the rest of the columns
     headers.forEach((header, colIndex) => {
-        // Skip Timestamp, Session Start Time (already inserted as Date), and Session End Time (already used for calculation)
-        if (colIndex === indices.name || colIndex === indices.timestamp || colIndex === indices.startTime || colIndex === indices.endTime) {
-            return;
-        }
-
+      if (columnsToKeepIndices.has(colIndex)) {
         let cellValue = row[colIndex];
-
-        // Format any other remaining Date objects with full locale string
-        if (cellValue instanceof Date) {
-            cellValue = cellValue.toLocaleString();
+        if (colIndex === indices.startTime) {
+            cellValue = startDate;
+        } else if (colIndex === indices.endTime) {
+            cellValue = durationMinutes + ' min';
         }
-
         newRow.push(cellValue);
+      }
     });
 
     return newRow;
@@ -374,8 +348,19 @@ function getFilteredData(filters) {
         const coordinatorName = row[indices.name]; // Get coordinator name
         const classCountsString = row[indices.classCounts]; // e.g., "6a: 20, 7b: 15"
         const module = row[indices.module];
-        // Use the date part for class breakdown consistency
-        const startTime = (row[indices.startTime] instanceof Date) ? row[indices.startTime].toLocaleDateString() : row[indices.startTime];
+
+        const startTime = row[indices.startTime];
+        const endTime = row[indices.endTime];
+        let durationMinutes = 0;
+        let startDate = startTime;
+        if (startTime instanceof Date) {
+          startDate = formatDateCustom(startTime);
+          if (endTime instanceof Date) {
+            const durationMs = endTime.getTime() - startTime.getTime();
+            durationMinutes = (durationMs / (1000 * 60)).toFixed(0); // Round to nearest minute
+            startDate += ` (${durationMinutes} min)`;
+          }
+        }
 
         // Parse the class counts string to map class -> student count
         const sessionClassesMap = {};
@@ -384,7 +369,6 @@ function getFilteredData(filters) {
                 const parts = item.split(':').map(s => s.trim());
                 if (parts.length === 2 && parts[0] && parts[1]) {
                     const className = parts[0];
-                    // Sanitize and convert count, safely handling non-numeric parts
                     const count = parseInt(parts[1].replace(/[^0-9]/g, ''), 10) || 0;
                     sessionClassesMap[className] = count;
                 }
@@ -395,10 +379,9 @@ function getFilteredData(filters) {
         Object.keys(sessionClassesMap).forEach(cls => {
             const studentCount = sessionClassesMap[cls];
             if (classBreakdown.hasOwnProperty(cls)) {
-                // Add session details including new coordinator and student count
                 classBreakdown[cls].push({
                     module: module,
-                    date: startTime,
+                    date: startDate,
                     coordinator: coordinatorName,
                     students: studentCount
                 });
@@ -407,15 +390,14 @@ function getFilteredData(filters) {
       });
 
       // Convert the classBreakdown object into an array of objects for easier client-side rendering
-      const breakdownArray = Object.keys(classBreakdown).map(cls => ({
+      const breakdownArray = Object.keys(classBreakdown).sort().map(cls => ({
         className: cls,
         sessions: classBreakdown[cls]
       }));
       classBreakdown = breakdownArray;
-
     } else {
-        // School exists in filter list but not on Schools sheet structure (shouldn't happen if data is clean)
-        classBreakdown = [];
+      // School exists in filter list but not on Schools sheet structure (shouldn't happen if data is clean)
+      classBreakdown = [];
     }
   }
 

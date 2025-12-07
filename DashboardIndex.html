@@ -434,7 +434,7 @@
         <div id="statusMessage"></div>
 
         <div id="reportContainer">
-            <p>Use the filters above and click <em>Run Report</em> to display session data.</p>
+            <p>Use the filters above and click <b>Run Report</b> to display session data.</p>
         </div>
     </div>
 
@@ -653,6 +653,15 @@
             }
         }
 
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         // Helper function to render the main table (Report 1)
         function renderTable(data, headers) {
             let html = '<table class="data-table">';
@@ -676,11 +685,12 @@
                 html += '<tr>';
                 row.forEach(cell => {
                     // Truncate long text fields for better dashboard view
-                    let displayCell = cell.toString();
-                    if (displayCell.length > 50) {
-                        displayCell = displayCell.substring(0, 50) + '...';
+                    let displayCell = escapeHtml(cell.toString());
+                    if (displayCell.length > 40) {
+                        html += `<td title="${displayCell}">${displayCell.substring(0, 35)}...</td>`;
+                    } else {
+                        html += `<td>${displayCell}</td>`;
                     }
-                    html += `<td>${displayCell}</td>`;
                 });
                 html += '</tr>';
             });
